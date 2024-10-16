@@ -28,6 +28,20 @@ namespace NHessian.IO
         /// </summary>
         public static TypeBindings Java { get; } = new JavaTypeBindings();
 
+
+        private static TypeBindings _CSharp;
+        /// <summary>
+        /// Gets the default java bindings. This is a shortcut for
+        /// <see cref="JavaTypeBindings"/>.
+        /// </summary>
+        public static TypeBindings CSharp { get {
+                if(_CSharp == null)
+                {
+                    _CSharp = new CSharpTypeBindings();
+                }
+                return _CSharp;
+            } } 
+
         /// <summary>
         /// Returns a bound type for <paramref name="typeString"/>
         /// if a binding exists.
