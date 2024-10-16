@@ -294,6 +294,11 @@ namespace NHessian.IO
                 return;
             }
 
+            if (TryWriteReference(value))
+            {
+                return;
+            }
+            AddValueRef(value);
             // # UTF-8 encoded character string split into 64k chunks
             var len = value.Length;
             if (len <= 31)

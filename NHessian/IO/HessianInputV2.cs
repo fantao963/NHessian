@@ -190,7 +190,9 @@ namespace NHessian.IO
                 case 0x10: case 0x11: case 0x12: case 0x13: case 0x14: case 0x15: case 0x16: case 0x17:
                 case 0x18: case 0x19: case 0x1a: case 0x1b: case 0x1c: case 0x1d: case 0x1e: case 0x1f:
 #pragma warning restore format
-                    return _streamReader.ReadInternedString(tag);
+                    var str = _streamReader.ReadInternedString(tag);
+                    AddRef(str);
+                    return str;
 
                 // ::= [x30-x33] b0 <utf8-data>   # string of length 0-1023
                 case 0x30:
@@ -198,16 +200,19 @@ namespace NHessian.IO
                 case 0x32:
                 case 0x33:
                     var strLen = ((tag - 0x30) << 8) + _streamReader.Read();
-                    return strLen <= STRING_INTERN_THRESHOLD ? _streamReader.ReadInternedString(strLen) : _streamReader.ReadString(strLen);
-
+                    str= strLen <= STRING_INTERN_THRESHOLD ? _streamReader.ReadInternedString(strLen) : _streamReader.ReadString(strLen);
+                    AddRef(str);
+                    return str;
                 // ::= 'S' b1 b0 <utf8-data> # string of length 0-65535
                 case 'S':
-                    return _streamReader.ReadString(_streamReader.ReadShort());
-
+                    str =_streamReader.ReadString(_streamReader.ReadShort());
+                    AddRef(str);
+                    return str;
                 // ::= x52 b1 b0 <utf8-data> string # non-final chunk
                 case 0x52:
-                    return ReadMultiPartString();
-
+                    str= ReadMultiPartString();
+                    AddRef(str);
+                    return str;
                 /* BINARY */
                 // Compact: short binary
                 // ::= [x20-x2f] <binary-data>    # binary data of length 0-15
@@ -479,6 +484,12 @@ namespace NHessian.IO
         public override string ReadString()
         {
             var tag = _streamReader.Read();
+            if (tag == 0x51)
+            {
+                int idx = ReadInt();
+                return _refs[idx] as string;
+            }
+            string ret = null;
             switch (tag)
             {
                 case 'N':
@@ -492,24 +503,28 @@ namespace NHessian.IO
                 case 0x10: case 0x11: case 0x12: case 0x13: case 0x14: case 0x15: case 0x16: case 0x17:
                 case 0x18: case 0x19: case 0x1a: case 0x1b: case 0x1c: case 0x1d: case 0x1e: case 0x1f:
 #pragma warning restore format
-                    return _streamReader.ReadInternedString(tag);
-
+                    ret= _streamReader.ReadInternedString(tag);
+                    AddRef(ret);
+                    return ret;
                 // ::= [x30-x33] b0 <utf8-data>           # string of length 0-1023
                 case 0x30:
                 case 0x31:
                 case 0x32:
                 case 0x33:
                     var len = ((tag - 0x30) << 8) + _streamReader.Read();
-                    return len <= STRING_INTERN_THRESHOLD ? _streamReader.ReadInternedString(len) : _streamReader.ReadString(len);
-
+                    ret= len <= STRING_INTERN_THRESHOLD ? _streamReader.ReadInternedString(len) : _streamReader.ReadString(len);
+                    AddRef(ret);
+                    return ret;
                 // ::= 'S' b1 b0 <utf8-data>              # string of length 0-65535
                 case 'S':
-                    return _streamReader.ReadString(_streamReader.ReadShort());
-
+                    ret= _streamReader.ReadString(_streamReader.ReadShort());
+                    AddRef(ret);
+                    return ret;
                 // ::= x52 b1 b0 <utf8-data> string       # non-final chunk
                 case 0x52:
-                    return ReadMultiPartString();
-
+                    ret = ReadMultiPartString();
+                    AddRef(ret);
+                    return ret;
                 default:
                     throw new UnsupportedTagException("string", tag);
             }
