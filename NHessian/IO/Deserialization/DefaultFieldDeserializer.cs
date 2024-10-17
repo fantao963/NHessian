@@ -11,6 +11,16 @@ namespace NHessian.IO.Deserialization
         public DefaultFieldDeserializer(FieldInfo fieldInfo)
             : base(fieldInfo)
         {
+            if (fieldInfo.FieldType == typeof(float))
+            {
+                _assign = (obj, value) =>
+                {
+                    fieldInfo.SetValue(obj,Convert.ToSingle(value));
+                };
+                return;
+            }
+
+
             ParameterExpression targetExp = Expression.Parameter(typeof(object), "target");
             ParameterExpression valueExp = Expression.Parameter(typeof(object), "value");
 
