@@ -243,11 +243,24 @@ namespace NHessian.IO
                 case DateTime date:
                     WriteDate(date);
                     break;
-
+                case byte @byte:
+                    WriteInt(@byte);
+                    break;
+                case char @char:
+                    WriteInt(@char);
+                    break;
+                case short @short:
+                    WriteInt(@short);
+                    break;
+                case ushort @ushort:
+                    WriteInt(@ushort);
+                    break;
                 case int i:
                     WriteInt(i);
                     break;
-
+                case uint @uint:
+                    WriteLong(@uint);
+                    break;
                 case long l:
                     WriteLong(l);
                     break;
