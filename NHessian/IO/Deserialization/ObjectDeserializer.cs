@@ -16,7 +16,18 @@ namespace NHessian.IO.Deserialization
         public ObjectDeserializer(Type objectType)
             : base(objectType)
         {
-            _activator = (Func<object>)Expression.Lambda(typeof(Func<object>), Expression.New(objectType)).Compile();
+            if (objectType.IsClass)
+            {
+                _activator = (Func<object>)Expression.Lambda(typeof(Func<object>), Expression.New(objectType)).Compile();
+            }
+            else
+            {
+                _activator = () =>
+                {
+                    return Activator.CreateInstance(objectType);
+                };
+            }
+            
             _fieldDeserializers = new ConcurrentDictionary<string, FieldDeserializer>();
         }
 
@@ -44,7 +55,7 @@ namespace NHessian.IO.Deserialization
 
         public override object CreateMap(HessianInput input) => _activator();
 
-        public override void PopulateMap(HessianInput input, object map)
+        public override void PopulateMap(HessianInput input,ref object map)
         {
             if (_definedFields != null)
             {

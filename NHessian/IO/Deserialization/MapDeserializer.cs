@@ -15,6 +15,6 @@ namespace NHessian.IO.Deserialization
 
         public abstract object CreateMap(HessianInput input);
 
-        public abstract void PopulateMap(HessianInput input, object map);
+        public abstract void PopulateMap(HessianInput input,ref object map);
     }
 }

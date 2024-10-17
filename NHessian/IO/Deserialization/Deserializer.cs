@@ -61,7 +61,7 @@ namespace NHessian.IO.Deserialization
 
             var map = deserializer.CreateMap(_input);
             _input.AddRef(map);
-            deserializer.PopulateMap(_input, map);
+            deserializer.PopulateMap(_input,ref map);
 
             if (hasEnd)
                 _input.ReadEnd();

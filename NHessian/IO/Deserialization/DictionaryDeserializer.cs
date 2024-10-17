@@ -54,7 +54,7 @@ namespace NHessian.IO.Deserialization
 
         public override object CreateMap(HessianInput input) => _activator();
 
-        public override void PopulateMap(HessianInput input, object map)
+        public override void PopulateMap(HessianInput input,ref object map)
         {
             var dict = (IDictionary)map;
 

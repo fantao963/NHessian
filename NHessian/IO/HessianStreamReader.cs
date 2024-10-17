@@ -280,7 +280,8 @@ namespace NHessian.IO
 
             ReadString(_charBuf, length);
 
-            return _strInternPool.GetOrAdd(_charBuf, length);
+            return new string(_charBuf, 0, length);
+            //return _strInternPool.GetOrAdd(_charBuf, length);
         }
 
         private void FetchNext()

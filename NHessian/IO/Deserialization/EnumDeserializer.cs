@@ -35,7 +35,7 @@ namespace NHessian.IO.Deserialization
             return Enum.Parse(MapType, input.ReadString());
         }
 
-        public override void PopulateMap(HessianInput input, object map)
+        public override void PopulateMap(HessianInput input,ref object map)
         {
         }
     }
