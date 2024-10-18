@@ -11,11 +11,19 @@ namespace NHessian.IO.Deserialization
         public DefaultFieldDeserializer(FieldInfo fieldInfo)
             : base(fieldInfo)
         {
-            if (fieldInfo.FieldType == typeof(float))
+            if (fieldInfo.FieldType == typeof(float)
+                || fieldInfo.FieldType == typeof(ushort)
+                || fieldInfo.FieldType == typeof(ulong)
+                || fieldInfo.FieldType == typeof(byte)
+                || fieldInfo.FieldType == typeof(sbyte)
+                || fieldInfo.FieldType == typeof(char)
+                || fieldInfo.FieldType == typeof(short)
+
+                )
             {
                 _assign = (obj, value) =>
                 {
-                    fieldInfo.SetValue(obj,Convert.ToSingle(value));
+                    fieldInfo.SetValue(obj,Convert.ChangeType(value,fieldInfo.FieldType));
                 };
                 return;
             }
