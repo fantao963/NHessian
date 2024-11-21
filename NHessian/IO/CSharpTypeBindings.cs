@@ -44,7 +44,7 @@ namespace NHessian.IO
 
         public override string TypeToTypeString(Type type)
         {
-            var typeString=type.FullName;
+            var typeString=type.ToString();
             return typeString;
         }
     }
